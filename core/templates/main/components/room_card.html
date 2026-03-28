@@ -1,0 +1,27 @@
+<article class="room-card group relative overflow-hidden rounded-3xl border border-orange-100 bg-white p-4 shadow-xl transition-all duration-500 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-luxury">
+    <div class="overflow-hidden rounded-2xl">
+        <img
+            src="{{ room.display_image_url }}"
+            alt="{{ room.name }}"
+            class="h-72 w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            loading="lazy"
+        >
+    </div>
+    <div class="space-y-3 p-2 pt-5">
+        <h3 class="text-2xl font-semibold tracking-wide text-orange-900">{{ room.name }}</h3>
+        <p class="text-sm leading-relaxed text-neutral-600">{{ room.description }}</p>
+        <div class="flex items-center justify-between pt-2">
+            <span class="text-sm font-medium text-orange-700">
+                {% if room.price %}{{ site_content.room_price_prefix }} ${{ room.price }}{% else %}{{ site_content.room_custom_pricing_text }}{% endif %}
+            </span>
+            <button
+                type="button"
+                class="open-booking-modal inline-flex items-center rounded-full bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                data-room-id="{{ room.id }}"
+                data-room-name="{{ room.name }}"
+            >
+                {{ site_content.room_book_button_text }}
+            </button>
+        </div>
+    </div>
+</article>

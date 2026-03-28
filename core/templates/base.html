@@ -1,0 +1,38 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family={{ site_settings.font_family|urlencode }}&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{% block title %}JERM STUDIO{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: "#fff8f1",
+                            100: "#ffedd5",
+                            500: "#f97316",
+                            600: "#ea580c",
+                            900: "#7c2d12"
+                        }
+                    },
+                    boxShadow: {
+                        luxury: "0 18px 35px -14px rgba(194, 65, 12, 0.35)"
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="{% static 'main/css/styles.css' %}">
+</head>
+<body 
+    class="bg-orange-50 text-neutral-800 antialiased selection:bg-orange-200/80"
+    style="font-family: '{{ site_settings.font_family }}', sans-serif;">
+    {% block content %}{% endblock %}
+    <script src="{% static 'main/js/main.js' %}"></script>
+</body>
+</html>

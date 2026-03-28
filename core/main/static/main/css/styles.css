@@ -1,0 +1,105 @@
+html {
+    scroll-behavior: smooth;
+}
+
+.lang-switcher button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Hero studio logo — cream pill, dark warm text (matches brand reference) */
+.studio-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0.55rem 1.15rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(254, 215, 170, 0.65);
+    background: linear-gradient(180deg, #fffdf9 0%, #faf6f0 100%);
+    box-shadow:
+        0 1px 2px rgba(124, 45, 18, 0.06),
+        0 8px 24px rgba(194, 65, 12, 0.08);
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: clamp(0.5625rem, 2.1vw, 0.6875rem);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #6b2f18;
+    text-align: center;
+    hyphens: auto;
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+    .studio-logo-badge {
+        padding: 0.65rem 1.5rem;
+        font-size: 0.6875rem;
+        letter-spacing: 0.35em;
+    }
+}
+
+.studio-logo-img {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background-image: radial-gradient(circle at 20% 10%, rgba(251, 146, 60, 0.14), transparent 32%),
+        radial-gradient(circle at 80% 0%, rgba(251, 191, 36, 0.13), transparent 30%);
+}
+
+.animate-fade-up {
+    animation: fadeUp 900ms ease-out both;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scroll-indicator {
+    animation: pulse 1800ms infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.65;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.input-field {
+    width: 100%;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(251, 146, 60, 0.26);
+    background: rgba(255, 255, 255, 0.9);
+    color: #7c2d12;
+    padding: 0.8rem 0.95rem;
+    outline: none;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.input-field::placeholder {
+    color: rgba(154, 52, 18, 0.52);
+}
+
+.input-field:focus {
+    border-color: rgba(249, 115, 22, 0.8);
+    box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.24);
+}
+
+.booking-modal-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+}
