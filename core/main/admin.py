@@ -21,11 +21,25 @@ class BookingAdmin(admin.ModelAdmin):
         "phone",
         "date",
         "time",
+        "status",
         "created_at",
     )
-    list_filter = ("date", "time", "created_at")
+    list_filter = ("date", "time", "status", "created_at")
     search_fields = ("first_name", "last_name", "email")
     ordering = ("-date", "-time")
+    actions = ["cancel_bookings"]
+
+    @admin.action(description="Cancel selected bookings (sends email notification)")
+    def cancel_bookings(self, request, queryset):
+        count = 0
+        for booking in queryset.exclude(status=Booking.Status.CANCELED):
+            booking.status = Booking.Status.CANCELED
+            booking.save()
+            count += 1
+        self.message_user(
+            request,
+            f"{count} booking(s) canceled — notification emails sent.",
+        )
 
 
 @admin.register(SiteContent)

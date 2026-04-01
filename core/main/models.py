@@ -2,7 +2,14 @@ from datetime import date as date_cls
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
+
+
+phone_validator = RegexValidator(
+    regex=r'^\+?\d{7,15}$',
+    message='Enter a valid phone number (7–15 digits, optional + prefix).',
+)
 
 
 class SiteSettings(models.Model):
@@ -132,15 +139,24 @@ class PlacePhoto(models.Model):
 
 
 class Booking(models.Model):
-    # Opening hours 09:00 - 21:00 (inclusive, hourly slots)
+
+    class Status(models.TextChoices):
+        BOOKED = 'booked', 'Booked'
+        CANCELED = 'canceled', 'Canceled'
+
     SLOT_CHOICES = tuple((f"{hour:02d}:00", f"{hour:02d}:00") for hour in range(9, 22))
 
     first_name = models.CharField(max_length=80)
     last_name = models.CharField(max_length=80)
     email = models.EmailField()
-    phone = models.CharField(max_length=30)
+    phone = models.CharField(max_length=30, validators=[phone_validator])
     date = models.DateField()
     time = models.TimeField()
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.BOOKED,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -149,8 +165,15 @@ class Booking(models.Model):
             models.UniqueConstraint(fields=("date", "time"), name="unique_booking_slot"),
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.pk:
+            self._original_date = self.date
+            self._original_time = self.time
+            self._original_status = self.status
+
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.date} {self.time}"
+        return f"{self.first_name} {self.last_name} – {self.date} {self.time}"
 
     @classmethod
     def all_time_slots(cls):
@@ -160,7 +183,12 @@ class Booking(models.Model):
     def available_dates(cls, days=60):
         today = date_cls.today()
         booked = {}
-        for entry in cls.objects.filter(date__gte=today, date__lte=today + timedelta(days=days)):
+        qs = cls.objects.filter(
+            date__gte=today,
+            date__lte=today + timedelta(days=days),
+            status=cls.Status.BOOKED,
+        )
+        for entry in qs:
             booked.setdefault(entry.date, set()).add(entry.time.strftime("%H:%M"))
 
         full_count = len(cls.all_time_slots())
@@ -174,7 +202,8 @@ class Booking(models.Model):
     @classmethod
     def available_slots_for_date(cls, target_date):
         booked_slots = set(
-            cls.objects.filter(date=target_date).values_list("time", flat=True)
+            cls.objects.filter(date=target_date, status=cls.Status.BOOKED)
+            .values_list("time", flat=True)
         )
         booked_strings = {slot.strftime("%H:%M") for slot in booked_slots}
         return [slot for slot in cls.all_time_slots() if slot not in booked_strings]
