@@ -1,5 +1,5 @@
 """
-Celery tasks for async notifications.
+Celery tasks for async email notifications.
 
 To use Celery instead of threading:
   1. Install Redis and start it.
@@ -10,8 +10,8 @@ To use Celery instead of threading:
      with the .delay() calls shown below.
 
 Example swap in notifications.py:
-    # from main.tasks import send_email_task
-    # send_email_task.delay(subject, template, context, recipient)
+    from main.tasks import send_email_task
+    send_email_task.delay(subject, template, context, recipient)
 """
 import logging
 
@@ -42,23 +42,4 @@ def send_email_task(self, subject, template_name, context, recipient_email):
         logger.info("Email sent to %s — %s", recipient_email, subject)
     except Exception as exc:
         logger.exception("Email FAILED to %s — %s", recipient_email, subject)
-        raise self.retry(exc=exc)
-
-
-@shared_task(bind=True, max_retries=3, default_retry_delay=30)
-def send_sms_task(self, to_number, body):
-    account_sid = getattr(settings, "TWILIO_ACCOUNT_SID", None)
-    auth_token = getattr(settings, "TWILIO_AUTH_TOKEN", None)
-    from_number = getattr(settings, "TWILIO_PHONE_NUMBER", None)
-
-    if not all([account_sid, auth_token, from_number]):
-        return
-
-    try:
-        from twilio.rest import Client
-        client = Client(account_sid, auth_token)
-        client.messages.create(body=body, from_=from_number, to=to_number)
-        logger.info("SMS sent to %s", to_number)
-    except Exception as exc:
-        logger.exception("SMS FAILED to %s", to_number)
         raise self.retry(exc=exc)
